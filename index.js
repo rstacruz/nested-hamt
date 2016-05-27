@@ -18,16 +18,16 @@ function set (data, keypath, val) {
 
       if (!existing || existing.v) {
         // Overwrite a leaf value
-        data = hamt.set(data, _keypath, { k: { [nextKey]: 1 } })
+        data = hamt.set(data, _keypath, { k: objectPair(nextKey, 1) })
       } else if (existing && existing.k && !(nextKey in existing.k)) {
         // Append to object
-        data = hamt.set(data, _keypath, { k: assign({}, existing.k, { [nextKey]: 1 }) })
+        data = hamt.set(data, _keypath, { k: assign({}, existing.k, objectPair(nextKey, 1)) })
       }
     }
   }
 
   if (val && typeof val === 'object') {
-    data = hamt.set(data, key, { [Array.isArray(val) ? 'a' : 'k']: val })
+    data = hamt.set(data, key, objectPair(Array.isArray(val) ? 'a' : 'k', val))
     for (var k in val) {
       data = set(data, keypath.concat([k]), val[k])
     }
@@ -120,6 +120,16 @@ function isHamt (data) {
     typeof data.type === 'string' &&
     typeof data.mask === 'number' &&
     typeof data.children === 'object'
+}
+
+/*
+ * Works like `{ [key]: value }`, but implemented this way for ES5 compatibility
+ */
+
+function objectPair (key, value) {
+  var obj = {}
+  obj[key] = value
+  return obj
 }
 
 module.exports = {
