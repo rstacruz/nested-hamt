@@ -2,6 +2,7 @@ var test = require('tape')
 var toHamt = require('./index').toHamt
 var set = require('./index').set
 var get = require('./index').get
+var getType = require('./index').getType
 var h = require('mini-hamt')
 
 test('toHamt()', (t) => {
@@ -23,6 +24,26 @@ test('toHamt() array', (t) => {
   t.deepEqual(get(data)[1], src[1])
   t.end()
 })
+
+test('toHamt() primitives', (t) => {
+  var data = toHamt('hello')
+  t.deepEqual(get(data), 'hello')
+  t.deepEqual(getType(data), 'string')
+
+  data = toHamt(1)
+  t.deepEqual(get(data), 1)
+  t.deepEqual(getType(data), 'number')
+
+  data = toHamt(true)
+  t.deepEqual(get(data), true)
+  t.deepEqual(getType(data), 'boolean')
+
+  data = toHamt(null)
+  t.deepEqual(get(data), null)
+  t.deepEqual(getType(data), 'object')
+  t.end()
+})
+
 
 test('set()', (t) => {
   var src = { user: { name: { first: 'john', last: 'doe' } } }
