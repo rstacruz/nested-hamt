@@ -1,6 +1,6 @@
 # nested-hamt
 
-> Nested structures in HAMT
+> Nested JSON structures in a HAMT tree
 
 Based off of [mini-hamt], but this handles nested JSON structures. I'll explain later.
 
