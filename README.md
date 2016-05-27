@@ -4,6 +4,8 @@
 
 Based off of [mini-hamt], but this handles nested JSON structures. I'll explain later.
 
+[![Status](https://travis-ci.org/rstacruz/nested-hamt.svg?branch=master)](https://travis-ci.org/rstacruz/nested-hamt "See test builds")
+
 [mini-hamt]: https://www.npmjs.com/package/mini-hamt
 
 ## Install
