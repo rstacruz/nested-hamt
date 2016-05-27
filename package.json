@@ -1,0 +1,19 @@
+{
+  "name": "nested-hamt",
+  "version": "1.0.0",
+  "description": "Nested HAMT implementation",
+  "main": "index.js",
+  "scripts": {
+    "test": "node test.js"
+  },
+  "keywords": ["hamt", "json"],
+  "author": "Rico Sta. Cruz <rico@ricostacruz.com>",
+  "license": "MIT",
+  "dependencies": {
+    "mini-hamt": "1.0.3"
+  },
+  "devDependencies": {
+    "tape": "4.5.1",
+    "tape-watch": "2.1.0"
+  }
+}
