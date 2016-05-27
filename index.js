@@ -1,6 +1,7 @@
 const hamt = require('mini-hamt')
 const empty = hamt.empty
 const normalize = require('./lib/normalize_keypath')
+const assign = require('object-assign')
 
 /*
  * Sets data into a hamt store.
@@ -20,7 +21,7 @@ function set (data, keypath, val) {
         data = hamt.set(data, _keypath, { k: { [nextKey]: 1 } })
       } else if (existing && existing.k && !(nextKey in existing.k)) {
         // Append to object
-        data = hamt.set(data, _keypath, { k: Object.assign({}, existing.k, { [nextKey]: 1 }) })
+        data = hamt.set(data, _keypath, { k: assign({}, existing.k, { [nextKey]: 1 }) })
       }
     }
   }
