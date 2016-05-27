@@ -1,19 +1,30 @@
 {
   "name": "nested-hamt",
-  "version": "1.0.0",
   "description": "Nested HAMT implementation",
-  "main": "index.js",
-  "scripts": {
-    "test": "node test.js"
-  },
-  "keywords": ["hamt", "json"],
+  "version": "1.0.0",
   "author": "Rico Sta. Cruz <rico@ricostacruz.com>",
-  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/rstacruz/nested-hamt/issues"
+  },
   "dependencies": {
     "mini-hamt": "1.0.3"
   },
   "devDependencies": {
     "tape": "4.5.1",
     "tape-watch": "2.1.0"
+  },
+  "homepage": "https://github.com/rstacruz/nested-hamt#readme",
+  "keywords": [
+    "hamt",
+    "json"
+  ],
+  "license": "MIT",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rstacruz/nested-hamt.git"
+  },
+  "scripts": {
+    "test": "node test.js"
   }
 }
