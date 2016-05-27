@@ -73,6 +73,7 @@ function get (data, keypath) {
  */
 
 function del (data, keypath) {
+  // TODO: deepDel() to remove orphan references
   keypath = normalize(keypath)
   return hamt.del(data, keypath.join('.'))
 }

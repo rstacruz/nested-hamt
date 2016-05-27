@@ -2,6 +2,16 @@
 
 > Nested structures in HAMT
 
+Based off of [mini-hamt], but this handles nested JSON structures. I'll explain later.
+
+[mini-hamt]: https://www.npmjs.com/package/mini-hamt
+
+## Install
+
+```
+npm install --save @rstacruz/nested-hamt
+```
+
 ## API
 
 ### set
