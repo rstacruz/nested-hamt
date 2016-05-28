@@ -1,7 +1,7 @@
 const hamt = require('mini-hamt')
 const empty = hamt.empty
 const normalize = require('./lib/normalize_keypath')
-const assign = require('./lib/assign')
+const assign = require('fast.js/object/assign')
 
 /*
  * Sets data into a hamt store.
