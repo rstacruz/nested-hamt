@@ -11,7 +11,7 @@ Based off of [mini-hamt], but this handles nested JSON structures. I'll explain 
 ## Install
 
 ```
-npm install --save rstacruz/nested-hamt
+npm install --save @rstacruz/nested-hamt
 ```
 
 ## API
