@@ -12,15 +12,27 @@ const IS_ARRAY = '__isArray__'
  */
 
 function set (data, keypath_, val) {
+  return setRaw(data, keypath_, fromJS(val))
+}
+
+/*
+ * Set raw
+ */
+
+function setRaw (data, keypath_, val) {
   // Optimization: setting the root
   if (keypath_ === '' || keypath_.length === 0) {
-    return fromJS(val)
+    return val
   }
 
   // Optimization: only one step
   // eg: set(data, 'key', value)
-  if ((typeof keypath_ === 'string' && keypath_.indexOf('.') === -1) || (keypath_.length === 1)) {
-    return hamt.set(data, keypath_, fromJS(val))
+  if ((typeof keypath_ === 'string' && keypath_.indexOf('.') === -1)) {
+    return hamt.set(data, keypath_, val)
+  }
+
+  if (keypath_.length === 1 && keypath_[0] === keypath_) {
+    return hamt.set(data, keypath_[0], val)
   }
 
   var keypath = normalize.toArray(keypath_)
@@ -30,7 +42,7 @@ function set (data, keypath_, val) {
   var steps = getSteps(data, keypath)
 
   // Update steps
-  steps[steps.length - 1] = fromJS(val)
+  steps[steps.length - 1] = val
   for (var i = steps.length - 2; i >= 0; i--) {
     steps[i] = hamt.set(steps[i] || hamt.empty, keypath[i + 1], steps[i + 1])
   }
@@ -142,6 +154,23 @@ function toJS (data) {
   return result
 }
 
+function extend (data) {
+  var totalArgs = arguments.length
+  var source, totalKeys, i, j, key
+
+  for (i = 1; i < totalArgs; i++) {
+    source = arguments[i]
+    keys = Object.keys(source)
+    totalKeys = keys.length
+    for (j = 0; j < totalKeys; j++) {
+      key = keys[j]
+      data = hamt.set(data, key, fromJS(source[key]))
+    }
+  }
+
+  return data
+}
+
 /*
  * Checks if a given data object is a HAMT object.
  */
@@ -164,14 +193,16 @@ function objectPair (key, value) {
 }
 
 module.exports = {
-  set: set,
+  del: del,
+  empty: empty,
+  extend: extend,
   fromJS: fromJS,
-  toJS: toJS,
-  isHamt: isHamt,
   get: get,
   getRaw: getRaw,
-  empty: empty,
-  del: del,
+  getType: getType,
+  isHamt: isHamt,
   keys: keys,
-  getType: getType
+  set: set,
+  setRaw: setRaw,
+  toJS: toJS
 }

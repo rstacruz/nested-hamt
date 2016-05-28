@@ -18,7 +18,7 @@ npm install --save @rstacruz/nested-hamt
 
 ### set
 
-> `set(data, keypath, value)`
+> `set(tree, keypath, value)`
 
 Sets data into a HAMT store.
 
@@ -39,19 +39,19 @@ var data = set(empty, ['user', 'name'], 'John')
 
 ### get
 
-> `get(data, keypath)`
+> `get(tree, keypath)`
 
 Returns data from a HAMT store. If `keypath` is not given, it returns the entire store as a JSON object.
 
 ### del
 
-> `del(data, keypath)`
+> `del(tree, keypath)`
 
 Deletes data from a keypath.
 
 ### keys
 
-> `keys(data, keypath)`
+> `keys(tree, keypath)`
 
 Returns the available keys for the object/array in `keypath`.
 
@@ -63,9 +63,9 @@ Converts JSON `object` into a HAMT tree. Inverse of [toJS()](#tojs).
 
 ### toJS
 
-> `toJS(hamt)`
+> `toJS(tree)`
 
-Converts HAMT tree `hamt` into a JSON object. Inverse of [fromJS()](#fromjs).
+Converts HAMT `tree` into a JSON object. Inverse of [fromJS()](#fromjs).
 
 ### empty
 
@@ -76,13 +76,19 @@ Empty data.
 ```js
 import { set, get, empty } from 'nested-hamt'
 
-var data = set(empty, 'hello', 'world')
-get(data, 'hello') // => 'world'
+var tree = set(empty, 'hello', 'world')
+get(tree, 'hello') // => 'world'
 ```
+
+### extend
+
+> `extend(tree, ...objects)`
+
+Extends HAMT `tree` with data from `objects`. Compare with Object.assign().
 
 ### getType
 
-> `getType(data, keypath)`
+> `getType(tree, keypath)`
 
 Checks for the type of data. Can return `object`, `array`, or anything *typeof* can return (`string`, `number`, `boolean`, and so on).
 

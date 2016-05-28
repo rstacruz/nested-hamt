@@ -1,9 +1,12 @@
 var test = require('tape')
 var fromJS = require('./index').fromJS
+var toJS = require('./index').toJS
 var set = require('./index').set
 var get = require('./index').get
+var extend = require('./index').extend
 var getType = require('./index').getType
 var h = require('mini-hamt')
+var assign = Object.assign
 
 test('fromJS()', (t) => {
   var src = { user: { name: { first: 'john', last: 'doe' } } }
@@ -62,3 +65,16 @@ test('set() append', (t) => {
   t.deepEqual(get(data, ['user']), { name: src.user.name, age: 30 })
   t.end()
 })
+
+test('extend()', (t) => {
+  var src = { user: { name: { first: 'john', last: 'doe' } } }
+  var data = fromJS(src)
+  t.deepEqual(
+    toJS(extend(data, { a: 1 })),
+    assign({}, src, { a: 1 }))
+  t.deepEqual(
+    toJS(extend(data, { a: { b: 1 } })),
+    assign({}, src, { a: { b: 1 } }))
+  t.end()
+})
+
