@@ -1,7 +1,7 @@
 {
   "name": "@rstacruz/nested-hamt",
   "description": "Nested HAMT implementation",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "author": "Rico Sta. Cruz <rico@ricostacruz.com>",
   "bugs": {
     "url": "https://github.com/rstacruz/nested-hamt/issues"
