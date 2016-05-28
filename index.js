@@ -72,7 +72,7 @@ function getRaw (data, keypath) {
   keypath = normalize.toArray(keypath)
   var result = data
   forEach(keypath, function (key) {
-    if (result) result = hamt.get(result, key)
+    if (result) result = hamt.get(result, key.toString())
   })
   return result
 }

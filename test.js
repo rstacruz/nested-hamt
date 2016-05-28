@@ -21,6 +21,12 @@ test('fromJS()', (t) => {
   t.end()
 })
 
+test('fromJS()', (t) => {
+  t.deepEqual(get(fromJS({ 1: 'hi' }), '1'), 'hi', 'get(str)')
+  t.deepEqual(get(fromJS({ 1: 'hi' }), 1), 'hi', 'get(num)')
+  t.end()
+})
+
 test('fromJS() array', (t) => {
   var src = [1, 2, 3]
   var data = fromJS(src)
