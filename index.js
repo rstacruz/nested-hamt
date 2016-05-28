@@ -1,7 +1,7 @@
 const hamt = require('mini-hamt')
 const empty = hamt.empty
 const normalize = require('./lib/normalize_keypath')
-const assign = require('object-assign')
+const assign = require('./lib/assign')
 
 /*
  * Sets data into a hamt store.
@@ -10,6 +10,7 @@ const assign = require('object-assign')
 function set (data, keypath_, val) {
   var keypath = normalize.toArray(keypath_)
   var key = normalize.toString(keypath_)
+
   if (keypath.length > 1) {
     for (var i = 0, len = keypath.length - 1; i < len; i++) {
       var nextKey = keypath[i + 1]
