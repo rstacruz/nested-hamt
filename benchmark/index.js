@@ -1,6 +1,8 @@
 var bm = require('./bm')
 var immutable = require('immutable')
 var hamt = require('../index')
+var mhamt = require('mini-hamt')
+var scour = require('scourjs')
 
 const data =
   { artists:
@@ -13,7 +15,7 @@ const data =
       2: { id: 2, name: 'Come Fly With Me', genre: 'Jazz', artist_id: 2 },
       3: { id: 3, name: '1984', genre: 'Pop', artist_id: 4 } } }
 
-bm('fromJS', {
+bm('fromJS()', {
   'nested-hamt': () => {
     hamt.fromJS(data)
   },
@@ -25,20 +27,38 @@ bm('fromJS', {
 var hData = hamt.fromJS(data)
 var iData = immutable.fromJS(data)
 
-bm('set', {
+bm('set()', {
   'nested-hamt': () => {
     hamt.set(hData, 'hello', 'world')
   },
   'immutable': () => {
     iData.set('hello', 'world')
+  },
+  'scour': () => {
+    scour.set(data, ['hello'], 'world')
   }
 })
 
-bm('setIn', {
+bm('setIn()', {
   'nested-hamt': () => {
     hamt.set(hData, ['artists', '5'], 'hello')
   },
   'immutable': () => {
     iData.setIn(['artists', '5'], 'hello')
+  },
+  'scour': () => {
+    scour.set(data, ['artists', '5'], 'hello')
+  }
+})
+
+bm('getIn()', {
+  'nested-hamt': () => {
+    hamt.get(hData, ['artists', '1', 'name'])
+  },
+  'immutable': () => {
+    iData.getIn(['artists', '1', 'name'])
+  },
+  'scour': () => {
+    scour.get(data, ['artists', '1', 'name'])
   }
 })

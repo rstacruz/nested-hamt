@@ -12,6 +12,7 @@
   },
   "devDependencies": {
     "immutable": "3.8.1",
+    "scourjs": "1.0.1",
     "tape": "4.5.1",
     "tape-watch": "2.1.0"
   },

@@ -8,6 +8,10 @@ var defaults = {
 }
 
 function bm (suitename, steps, options) {
+  if (process.env.BM &&
+    suitename.toLowerCase().indexOf(process.env.BM.toLowerCase()) === -1) {
+    return
+  }
   options = assign({}, defaults, options)
   if (!options) options = {}
   options.onStart(suitename, steps, options)
