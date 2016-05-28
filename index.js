@@ -27,13 +27,7 @@ function set (data, keypath_, val) {
   var key = normalize.toString(keypath_)
 
   // Get steps
-  var cursor = data
-  var steps = map(keypath, function (key) {
-    if (!cursor) return
-    var result = hamt.get(cursor, key)
-    cursor = result
-    return result
-  })
+  var steps = getSteps(data, keypath)
 
   // Update steps
   steps[steps.length - 1] = fromJS(val)
@@ -43,6 +37,19 @@ function set (data, keypath_, val) {
 
   data = hamt.set(data, keypath[0], steps[0])
   return data
+}
+
+/*
+ * Internal: gets the steps in the keypath
+ */
+
+function getSteps (data, keypath) {
+  return map(keypath, function (key) {
+    if (!data) return
+    var result = hamt.get(data, key)
+    data = result
+    return result
+  })
 }
 
 /*
@@ -59,7 +66,7 @@ function getIn (data, keypath) {
 }
 
 /*
- * Gets original data.
+ * Gets original data; can return a HAMT.
  */
 
 function get (data, keypath) {
@@ -159,6 +166,7 @@ function objectPair (key, value) {
 module.exports = {
   set: set,
   fromJS: fromJS,
+  toJS: toJS,
   isHamt: isHamt,
   get: get,
   empty: empty,

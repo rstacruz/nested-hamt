@@ -11,7 +11,7 @@ Based off of [mini-hamt], but this handles nested JSON structures. I'll explain 
 ## Install
 
 ```
-npm install --save @rstacruz/nested-hamt
+npm install --save rstacruz/nested-hamt
 ```
 
 ## API
@@ -54,6 +54,18 @@ Deletes data from a keypath.
 > `keys(data, keypath)`
 
 Returns the available keys for the object/array in `keypath`.
+
+### fromJS
+
+> `fromJS(object)`
+
+Converts JSON `object` into a HAMT tree. Inverse of [toJS()](#tojs).
+
+### toJS
+
+> `toJS(hamt)`
+
+Converts HAMT tree `hamt` into a JSON object. Inverse of [fromJS()](#fromjs).
 
 ### empty
 
