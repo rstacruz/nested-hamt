@@ -3,73 +3,68 @@ const empty = hamt.empty
 const normalize = require('./lib/normalize_keypath')
 const assign = require('fast.js/object/assign')
 const forEach = require('fast.js/array/forEach')
+const map = require('fast.js/array/map')
 const forIn = require('fast.js/object/forEach')
+const IS_ARRAY = '__isArray__'
 
 /*
  * Sets data into a hamt store.
  */
 
 function set (data, keypath_, val) {
+  // Optimization: setting the root
+  if (keypath_ === '' || keypath_.length === 0) {
+    return fromJS(val)
+  }
+
+  // Optimization: only one step
+  // eg: set(data, 'key', value)
+  if ((typeof keypath_ === 'string' && keypath_.indexOf('.') === -1) || (keypath_.length === 1)) {
+    return hamt.set(data, keypath_, fromJS(val))
+  }
+
   var keypath = normalize.toArray(keypath_)
   var key = normalize.toString(keypath_)
 
-  if (keypath.length > 1) {
-    forEach(keypath, function (i) {
-      var nextKey = keypath[i + 1]
-      var _keypath = keypath.slice(0, i + 1).join('.')
-      var existing = hamt.get(data, _keypath)
+  // Get steps
+  var cursor = data
+  var steps = map(keypath, function (key) {
+    if (!cursor) return
+    var result = hamt.get(cursor, key)
+    cursor = result
+    return result
+  })
 
-      if (!existing || existing.v) {
-        // Overwrite a leaf value
-        data = hamt.set(data, _keypath, { k: objectPair(nextKey, 1) })
-      } else if (existing && existing.k && !(nextKey in existing.k)) {
-        // Append to object
-        data = hamt.set(data, _keypath, { k: assign({}, existing.k, objectPair(nextKey, 1)) })
-      }
-    })
+  // Update steps
+  steps[steps.length - 1] = fromJS(val)
+  for (var i = steps.length - 2; i >= 0; i--) {
+    steps[i] = hamt.set(steps[i] || hamt.empty, keypath[i + 1], steps[i + 1])
   }
 
-  if (val && typeof val === 'object') {
-    data = hamt.set(data, key, objectPair(Array.isArray(val) ? 'a' : 'k', val))
-    forIn(val, function (_, k) {
-      data = set(data, keypath.concat([k]), val[k])
-    })
-  } else {
-    data = hamt.set(data, key, { v: val })
-  }
+  data = hamt.set(data, keypath[0], steps[0])
   return data
 }
 
 /*
- * Gets data.
+ * Gets data as HAMT.
  */
 
-function get (data, keypath_) {
-  var keypath = normalize.toArray(keypath_)
-  var key = keypath_ ? normalize.toString(keypath_) : ''
-  var res = hamt.get(data, key)
-  if (typeof res === 'undefined') return
+function getIn (data, keypath) {
+  keypath = normalize.toArray(keypath)
+  var result = data
+  forEach(keypath, function (key) {
+    if (result) result = hamt.get(result, key)
+  })
+  return result
+}
 
-  // Value
-  if ('v' in res) return res.v
+/*
+ * Gets original data.
+ */
 
-  // Array
-  if (res.a) {
-    var result = []
-    forIn(res.a, function (_, _key) {
-      result[_key] = get(data, (keypath || []).concat([_key]))
-    })
-    return result
-  }
-
-  // Object (key-value)
-  if (res.k) {
-    var result = {}
-    forIn(res.k, function (_, _key) {
-      result[_key] = get(data, (keypath || []).concat([_key]))
-    })
-    return result
-  }
+function get (data, keypath) {
+  var result = getIn(data, keypath)
+  return toJS(result)
 }
 
 /*
@@ -77,7 +72,6 @@ function get (data, keypath_) {
  */
 
 function del (data, keypath) {
-  // TODO: deepDel() to remove orphan references
   keypath = normalize.toString(keypath)
   return hamt.del(data, keypath)
 }
@@ -89,8 +83,10 @@ function del (data, keypath) {
 function keys (data, keypath) {
   keypath = normalize.toString(keypath)
   var result = hamt.get(data, keypath)
-  if (result && result.k) { return Object.keys(k) }
-  if (result && result.a) { return Object.keys(a) }
+
+  return map(result, function (child) {
+    return child.key
+  })
 }
 
 /*
@@ -99,11 +95,9 @@ function keys (data, keypath) {
 
 function getType (data, keypath) {
   keypath = normalize.toString(keypath)
-  var result = hamt.get(data, keypath)
-  if (typeof result === 'undefined') return 'undefined'
-  if (result.k) return 'object'
-  if (result.a) return 'array'
-  if ('v' in result) return typeof result.v
+  var result = getIn(data, keypath)
+  var js = toJS(result)
+  return Array.isArray(js) ? 'array' : typeof js
 }
 
 /*
@@ -111,7 +105,34 @@ function getType (data, keypath) {
  */
 
 function fromJS (data) {
-  return set(hamt.empty, [], data)
+  if (typeof data !== 'object' || data === null) return data
+
+  var out = hamt.empty
+  forIn(data, function (val, key) {
+    out = hamt.set(out, key, fromJS(val))
+  })
+
+  if (Array.isArray(data)) {
+    out = hamt.set(out, IS_ARRAY, true)
+  }
+
+  return out
+}
+
+/*
+ * Converts a HAMT tree to a JSON object.
+ */
+
+function toJS (data) {
+  if (typeof data !== 'object' || data === null) return data
+  var isArray = hamt.get(data, IS_ARRAY)
+  var result = isArray ? [] : {}
+
+  map(data.children, function (child) {
+    if (child.key === IS_ARRAY) return
+    result[child.key] = toJS(child.value)
+  })
+  return result
 }
 
 /*

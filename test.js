@@ -19,6 +19,7 @@ test('fromJS()', (t) => {
 test('fromJS() array', (t) => {
   var src = [1, 2, 3]
   var data = fromJS(src)
+  t.equal(Array.isArray(get(data)), true)
   t.deepEqual(get(data), src)
   t.deepEqual(get(data)[0], src[0])
   t.deepEqual(get(data)[1], src[1])
