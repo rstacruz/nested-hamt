@@ -7,9 +7,9 @@ const assign = require('object-assign')
  * Sets data into a hamt store.
  */
 
-function set (data, keypath, val) {
-  keypath = normalize(keypath)
-  var key = keypath.join('.')
+function set (data, keypath_, val) {
+  var keypath = normalize.toArray(keypath_)
+  var key = normalize.toString(keypath_)
   if (keypath.length > 1) {
     for (var i = 0, len = keypath.length - 1; i < len; i++) {
       var nextKey = keypath[i + 1]
@@ -41,9 +41,9 @@ function set (data, keypath, val) {
  * Gets data.
  */
 
-function get (data, keypath) {
-  keypath = normalize(keypath)
-  var key = keypath ? keypath.join('.') : ''
+function get (data, keypath_) {
+  var keypath = normalize.toArray(keypath_)
+  var key = keypath_ ? normalize.toString(keypath_) : ''
   var res = hamt.get(data, key)
   if (typeof res === 'undefined') return
 
@@ -75,8 +75,8 @@ function get (data, keypath) {
 
 function del (data, keypath) {
   // TODO: deepDel() to remove orphan references
-  keypath = normalize(keypath)
-  return hamt.del(data, keypath.join('.'))
+  keypath = normalize.toString(keypath)
+  return hamt.del(data, keypath)
 }
 
 /*
@@ -84,8 +84,8 @@ function del (data, keypath) {
  */
 
 function keys (data, keypath) {
-  keypath = normalize(keypath)
-  var result = hamt.get(data, keypath.join('.'))
+  keypath = normalize.toString(keypath)
+  var result = hamt.get(data, keypath)
   if (result && result.k) { return Object.keys(k) }
   if (result && result.a) { return Object.keys(a) }
 }
@@ -95,8 +95,8 @@ function keys (data, keypath) {
  */
 
 function getType (data, keypath) {
-  keypath = normalize(keypath)
-  var result = hamt.get(data, keypath.join('.'))
+  keypath = normalize.toString(keypath)
+  var result = hamt.get(data, keypath)
   if (typeof result === 'undefined') return 'undefined'
   if (result.k) return 'object'
   if (result.a) return 'array'
@@ -107,7 +107,7 @@ function getType (data, keypath) {
  * Converts a JSON tree into hamt.
  */
 
-function toHamt (data) {
+function fromJS (data) {
   return set(hamt.empty, [], data)
 }
 
@@ -134,7 +134,7 @@ function objectPair (key, value) {
 
 module.exports = {
   set: set,
-  toHamt: toHamt,
+  fromJS: fromJS,
   isHamt: isHamt,
   get: get,
   empty: empty,
