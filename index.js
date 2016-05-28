@@ -56,7 +56,7 @@ function getSteps (data, keypath) {
  * Gets data as HAMT.
  */
 
-function getIn (data, keypath) {
+function getRaw (data, keypath) {
   keypath = normalize.toArray(keypath)
   var result = data
   forEach(keypath, function (key) {
@@ -70,7 +70,7 @@ function getIn (data, keypath) {
  */
 
 function get (data, keypath) {
-  var result = getIn(data, keypath)
+  var result = getRaw(data, keypath)
   return toJS(result)
 }
 
@@ -102,7 +102,7 @@ function keys (data, keypath) {
 
 function getType (data, keypath) {
   keypath = normalize.toString(keypath)
-  var result = getIn(data, keypath)
+  var result = getRaw(data, keypath)
   var js = toJS(result)
   return Array.isArray(js) ? 'array' : typeof js
 }
@@ -169,6 +169,7 @@ module.exports = {
   toJS: toJS,
   isHamt: isHamt,
   get: get,
+  getRaw: getRaw,
   empty: empty,
   del: del,
   keys: keys,

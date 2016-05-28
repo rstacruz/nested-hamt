@@ -51,7 +51,7 @@ bm('setIn()', {
   }
 })
 
-bm('getIn()', {
+bm('getIn() value', {
   'nested-hamt': () => {
     hamt.get(hData, ['artists', '1', 'name'])
   },
@@ -60,5 +60,17 @@ bm('getIn()', {
   },
   'scour': () => {
     scour.get(data, ['artists', '1', 'name'])
+  }
+})
+
+bm('getIn() object', {
+  'nested-hamt': () => {
+    hamt.getRaw(hData, ['artists', '1'])
+  },
+  'immutable': () => {
+    iData.getIn(['artists', '1'])
+  },
+  'scour': () => {
+    scour.get(data, ['artists', '1'])
   }
 })
