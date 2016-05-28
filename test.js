@@ -3,6 +3,8 @@ var fromJS = require('./index').fromJS
 var toJS = require('./index').toJS
 var set = require('./index').set
 var get = require('./index').get
+var keys = require('./index').keys
+var len = require('./index').len
 var extend = require('./index').extend
 var getType = require('./index').getType
 var h = require('mini-hamt')
@@ -78,3 +80,14 @@ test('extend()', (t) => {
   t.end()
 })
 
+test('keys()', t => {
+  t.deepEqual(keys(fromJS({ a: 1 })), ['a'], 'object keys')
+  t.deepEqual(keys(fromJS([ 'a', 'a' ])), ['0', '1'], 'array keys')
+  t.end()
+})
+
+test('len()', t => {
+  t.deepEqual(len(fromJS({ a: 1 })), 1, 'objects')
+  t.deepEqual(len(fromJS([ 'a', 'a' ])), 2, 'arrays')
+  t.end()
+})

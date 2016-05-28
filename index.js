@@ -82,7 +82,6 @@ function getRaw (data, keypath) {
  */
 
 function get (data, keypath) {
-  if (!keypath) return toJS(data)
   var result = getRaw(data, keypath)
   return toJS(result)
 }
@@ -102,9 +101,13 @@ function del (data, keypath) {
 
 function keys (data) {
   if (!data || !data.children) return
-  return map(data.children, function (child) {
+  var keys = map(data.children, function (child) {
     return child.key
   })
+  if (hamt.get(data, IS_ARRAY)) {
+    return keys.slice(1)
+  }
+  return keys
 }
 
 /*
@@ -181,6 +184,12 @@ function isHamt (data) {
     typeof data.children === 'object'
 }
 
+function len (data) {
+  if (!data || !data.children) return
+  if (hamt.get(data, IS_ARRAY)) return data.children.length - 1
+  return data.children.length
+}
+
 /*
  * Works like `{ [key]: value }`, but implemented this way for ES5 compatibility
  */
@@ -201,6 +210,7 @@ module.exports = {
   getType: getType,
   isHamt: isHamt,
   keys: keys,
+  len: len,
   set: set,
   setRaw: setRaw,
   toJS: toJS
