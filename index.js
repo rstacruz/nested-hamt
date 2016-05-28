@@ -2,6 +2,8 @@ const hamt = require('mini-hamt')
 const empty = hamt.empty
 const normalize = require('./lib/normalize_keypath')
 const assign = require('fast.js/object/assign')
+const forEach = require('fast.js/array/forEach')
+const forIn = require('fast.js/object/forEach')
 
 /*
  * Sets data into a hamt store.
@@ -12,7 +14,7 @@ function set (data, keypath_, val) {
   var key = normalize.toString(keypath_)
 
   if (keypath.length > 1) {
-    for (var i = 0, len = keypath.length - 1; i < len; i++) {
+    forEach(keypath, function (i) {
       var nextKey = keypath[i + 1]
       var _keypath = keypath.slice(0, i + 1).join('.')
       var existing = hamt.get(data, _keypath)
@@ -24,14 +26,14 @@ function set (data, keypath_, val) {
         // Append to object
         data = hamt.set(data, _keypath, { k: assign({}, existing.k, objectPair(nextKey, 1)) })
       }
-    }
+    })
   }
 
   if (val && typeof val === 'object') {
     data = hamt.set(data, key, objectPair(Array.isArray(val) ? 'a' : 'k', val))
-    for (var k in val) {
+    forIn(val, function (_, k) {
       data = set(data, keypath.concat([k]), val[k])
-    }
+    })
   } else {
     data = hamt.set(data, key, { v: val })
   }
@@ -54,18 +56,18 @@ function get (data, keypath_) {
   // Array
   if (res.a) {
     var result = []
-    for (var _key in res.a) {
+    forIn(res.a, function (_, _key) {
       result[_key] = get(data, (keypath || []).concat([_key]))
-    }
+    })
     return result
   }
 
   // Object (key-value)
   if (res.k) {
     var result = {}
-    for (var _key in res.k) {
+    forIn(res.k, function (_, _key) {
       result[_key] = get(data, (keypath || []).concat([_key]))
-    }
+    })
     return result
   }
 }
