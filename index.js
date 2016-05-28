@@ -82,6 +82,7 @@ function getRaw (data, keypath) {
  */
 
 function get (data, keypath) {
+  if (!keypath) return toJS(data)
   var result = getRaw(data, keypath)
   return toJS(result)
 }
@@ -99,11 +100,9 @@ function del (data, keypath) {
  * Returns keys.
  */
 
-function keys (data, keypath) {
-  keypath = normalize.toString(keypath)
-  var result = hamt.get(data, keypath)
-
-  return map(result, function (child) {
+function keys (data) {
+  if (!data || !data.children) return
+  return map(data.children, function (child) {
     return child.key
   })
 }

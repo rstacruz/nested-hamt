@@ -51,9 +51,9 @@ Deletes data from a keypath.
 
 ### keys
 
-> `keys(tree, keypath)`
+> `keys(tree)`
 
-Returns the available keys for the object/array in `keypath`.
+Returns the available keys for `tree`.
 
 ### fromJS
 
