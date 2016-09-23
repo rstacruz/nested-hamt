@@ -7,16 +7,27 @@ const map = require('fast.js/array/map')
 const forIn = require('fast.js/object/forEach')
 const IS_ARRAY = '__isArray__'
 
-/*
- * Sets data into a hamt store.
+/**
+ * Sets data into a HAMT tree.
+ *
+ * @param {Tree} data The HAMT tree to operate on
+ * @param {string[]} keypath List of keys
+ * @param {*} val Value to be set
+ * @return {Tree}
  */
 
-function set (data, keypath_, val) {
-  return setRaw(data, keypath_, fromJS(val))
+function set (data, keypath, val) {
+  return setRaw(data, keypath, fromJS(val))
 }
 
-/*
- * Set raw
+/**
+ * Set raw data.
+ *
+ * @param {Tree} data The HAMT tree to operate on
+ * @param {string[]} keypath List of keys
+ * @param {*} val Value to be set
+ * @return {Tree}
+ * @private
  */
 
 function setRaw (data, keypath_, val) {
@@ -51,8 +62,13 @@ function setRaw (data, keypath_, val) {
   return data
 }
 
-/*
- * Internal: gets the steps in the keypath
+/**
+ * Gets the steps in the keypath.
+ *
+ * @param {Tree} data The HAMT tree to operate on
+ * @param {string[]} keypath List of keys
+ * @return {Array.<*>} a list of values for every keypath step
+ * @private
  */
 
 function getSteps (data, keypath) {
@@ -66,6 +82,10 @@ function getSteps (data, keypath) {
 
 /*
  * Gets data as HAMT.
+ *
+ * @param {Tree} data The HAMT tree to operate on
+ * @param {string[]} keypath List of keys
+ * @returns {*} the value in the given keypath
  */
 
 function getRaw (data, keypath) {
@@ -77,8 +97,12 @@ function getRaw (data, keypath) {
   return result
 }
 
-/*
+/**
  * Gets original data; can return a HAMT.
+ *
+ * @param {Tree} data The HAMT tree to operate on
+ * @param {string[]} keypath List of keys
+ * @returns {*} the value in the given keypath
  */
 
 function get (data, keypath) {
@@ -86,8 +110,11 @@ function get (data, keypath) {
   return toJS(result)
 }
 
-/*
+/**
  * Deletes from a given keypath.
+ *
+ * @param {Tree} data The HAMT tree to operate on
+ * @returns {Tree} the resulting HAMT tree
  */
 
 function del (data, keypath) {
@@ -95,8 +122,11 @@ function del (data, keypath) {
   return hamt.del(data, keypath)
 }
 
-/*
- * Returns keys.
+/**
+ * Returns keys in a given HAMT tree.
+ *
+ * @param {Tree} data The HAMT tree to operate on
+ * @returns {string[]} a list of keys
  */
 
 function keys (data) {
@@ -111,7 +141,11 @@ function keys (data) {
 }
 
 /*
- * Returns the type.
+ * Returns the type in a given keypath.
+ *
+ * @param {Tree} data The HAMT tree to operate on
+ * @param {string[]} keypath List of keys
+ * @return {string} `array`, `object`, or whatever can be returned by *typeof*
  */
 
 function getType (data, keypath) {
@@ -121,8 +155,12 @@ function getType (data, keypath) {
   return Array.isArray(js) ? 'array' : typeof js
 }
 
-/*
- * Converts a JSON tree into hamt.
+/**
+ * Converts a JSON tree into a HAMT tree.
+ * If the given `data` isn't an object, it'll be returned as is.
+ *
+ * @param {object|*} data The JSON data to be set
+ * @return {Tree|*} the resulting HAMT tree
  */
 
 function fromJS (data) {
@@ -140,8 +178,12 @@ function fromJS (data) {
   return out
 }
 
-/*
+/**
  * Converts a HAMT tree to a JSON object.
+ * If the given `data` is not a HAMT tree, it'll be returned as is.
+ *
+ * @param {Tree|*} data The HAMT tree
+ * @returns {object|*} the resulting object
  */
 
 function toJS (data) {
@@ -155,6 +197,14 @@ function toJS (data) {
   })
   return result
 }
+
+/**
+ * Extends a HAMT tree with data from objects.
+ *
+ * @param {Tree} data The HAMT tree to operate on
+ * @param {object} ...sources Objects to extend the tree with
+ * @returns {Tree} the resulting HAMT tree
+ */
 
 function extend (data) {
   var totalArgs = arguments.length
@@ -173,16 +223,26 @@ function extend (data) {
   return data
 }
 
-/*
+/**
  * Checks if a given data object is a HAMT object.
+ *
+ * @param {Tree|*} data A HAMT tree or anythin
+ * @return {boolean}
  */
 
 function isHamt (data) {
-  typeof data === 'object' &&
+  return typeof data === 'object' &&
     typeof data.type === 'string' &&
     typeof data.mask === 'number' &&
     typeof data.children === 'object'
 }
+
+/**
+ * Returns the number of keys in a HAMT tree.
+ *
+ * @param {Tree} data
+ * @return {number}
+ */
 
 function len (data) {
   if (!data || !data.children) return
@@ -190,8 +250,10 @@ function len (data) {
   return data.children.length
 }
 
-/*
+/**
  * Works like `{ [key]: value }`, but implemented this way for ES5 compatibility
+ *
+ * @private
  */
 
 function objectPair (key, value) {
@@ -199,6 +261,10 @@ function objectPair (key, value) {
   obj[key] = value
   return obj
 }
+
+/*
+ * Exports
+ */
 
 module.exports = {
   del: del,

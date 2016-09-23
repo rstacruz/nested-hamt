@@ -7,7 +7,9 @@
     "url": "https://github.com/rstacruz/nested-hamt/issues"
   },
   "dependencies": {
+    "@rstacruz/jsdoc-render-md": "1.2.0",
     "fast.js": "0.1.1",
+    "jsdoc-parse": "1.2.7",
     "mini-hamt": "1.0.3",
     "object-assign": "4.1.0"
   },
@@ -29,6 +31,7 @@
     "url": "git+https://github.com/rstacruz/nested-hamt.git"
   },
   "scripts": {
-    "test": "node test.js"
+    "test": "node test.js",
+    "update": "jsdoc-parse -s none --src *.js | jsdoc-render-md > API.md"
   }
 }
