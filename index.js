@@ -1,5 +1,8 @@
+/**
+ * @module nested-hamt
+ */
+
 const hamt = require('mini-hamt')
-const empty = hamt.empty
 const normalize = require('./lib/normalize_keypath')
 const assign = require('fast.js/object/assign')
 const forEach = require('fast.js/array/forEach')
@@ -10,10 +13,24 @@ const IS_ARRAY = '__isArray__'
 /**
  * Sets data into a HAMT tree.
  *
+ * The `keypath`s can be given as an array or a dot-separated string. This
+ * applies to [get()](#get) and [del()](#del) as well.
+ *
  * @param {Tree} data The HAMT tree to operate on
  * @param {string[]} keypath List of keys
  * @param {*} val Value to be set
  * @return {Tree}
+ *
+ * @example
+ * import { set, get, empty } from 'nested-hamt'
+ *
+ * var data = set(empty, 'user', { name: 'John' })
+ * get(data, 'user.name') // => 'John'
+ *
+ * @example // Keypaths example
+ * // Both are equivalent
+ * var data = set(empty, 'user.name', 'John')
+ * var data = set(empty, ['user', 'name'], 'John')
  */
 
 function set (data, keypath, val) {
@@ -84,8 +101,9 @@ function getSteps (data, keypath) {
  * Gets data as HAMT.
  *
  * @param {Tree} data The HAMT tree to operate on
- * @param {string[]} keypath List of keys
+ * @param {?string[]} keypath List of keys
  * @returns {*} the value in the given keypath
+ * @private
  */
 
 function getRaw (data, keypath) {
@@ -98,10 +116,10 @@ function getRaw (data, keypath) {
 }
 
 /**
- * Gets original data; can return a HAMT.
+ * Returns data from a HAMT store. If `keypath` is not given, it returns the entire store as a JSON object.
  *
  * @param {Tree} data The HAMT tree to operate on
- * @param {string[]} keypath List of keys
+ * @param {?string[]} keypath List of keys
  * @returns {*} the value in the given keypath
  */
 
@@ -142,10 +160,12 @@ function keys (data) {
 
 /*
  * Returns the type in a given keypath.
+ * Can return `object`, `array`, or anything *typeof* can return (`string`,
+ * `number`, `boolean`, and so on).
  *
  * @param {Tree} data The HAMT tree to operate on
  * @param {string[]} keypath List of keys
- * @return {string} `array`, `object`, or whatever can be returned by *typeof*
+ * @returns {string}
  */
 
 function getType (data, keypath) {
@@ -158,6 +178,7 @@ function getType (data, keypath) {
 /**
  * Converts a JSON tree into a HAMT tree.
  * If the given `data` isn't an object, it'll be returned as is.
+ * Inverse of [toJS()](#tojs).
  *
  * @param {object|*} data The JSON data to be set
  * @return {Tree|*} the resulting HAMT tree
@@ -181,6 +202,7 @@ function fromJS (data) {
 /**
  * Converts a HAMT tree to a JSON object.
  * If the given `data` is not a HAMT tree, it'll be returned as is.
+ * Inverse of [fromJS()](#fromjs).
  *
  * @param {Tree|*} data The HAMT tree
  * @returns {object|*} the resulting object
@@ -249,6 +271,18 @@ function len (data) {
   if (hamt.get(data, IS_ARRAY)) return data.children.length - 1
   return data.children.length
 }
+
+/**
+ * An empty HAMT tree.
+ *
+ * @example
+ * import { set, get, empty } from 'nested-hamt'
+ *
+ * var tree = set(empty, 'hello', 'world')
+ * get(tree, 'hello') // => 'world'
+ */
+
+const empty = hamt.empty
 
 /**
  * Works like `{ [key]: value }`, but implemented this way for ES5 compatibility
