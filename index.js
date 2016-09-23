@@ -16,7 +16,7 @@ const IS_ARRAY = '__isArray__'
  * The `keypath`s can be given as an array or a dot-separated string. This
  * applies to [get()](#get) and [del()](#del) as well.
  *
- * @param {Tree} data The HAMT tree to operate on
+ * @param {Tree} tree The HAMT tree to operate on
  * @param {string[]} keypath List of keys
  * @param {*} val Value to be set
  * @return {Tree}
@@ -24,23 +24,23 @@ const IS_ARRAY = '__isArray__'
  * @example
  * import { set, get, empty } from 'nested-hamt'
  *
- * var data = set(empty, 'user', { name: 'John' })
- * get(data, 'user.name') // => 'John'
+ * var tree = set(empty, 'user', { name: 'John' })
+ * get(tree, 'user.name') // => 'John'
  *
  * @example // Keypaths example
  * // Both are equivalent
- * var data = set(empty, 'user.name', 'John')
- * var data = set(empty, ['user', 'name'], 'John')
+ * var tree = set(empty, 'user.name', 'John')
+ * var  = set(empty, ['user', 'name'], 'John')
  */
 
-function set (data, keypath, val) {
-  return setRaw(data, keypath, fromJS(val))
+function set (tree, keypath, val) {
+  return setRaw(tree, keypath, fromJS(val))
 }
 
 /**
  * Set raw data.
  *
- * @param {Tree} data The HAMT tree to operate on
+ * @param {Tree} tree The HAMT tree to operate on
  * @param {string[]} keypath List of keys
  * @param {*} val Value to be set
  * @return {Tree}
@@ -82,17 +82,17 @@ function setRaw (data, keypath_, val) {
 /**
  * Gets the steps in the keypath.
  *
- * @param {Tree} data The HAMT tree to operate on
+ * @param {Tree} tree The HAMT tree to operate on
  * @param {string[]} keypath List of keys
  * @return {Array.<*>} a list of values for every keypath step
  * @private
  */
 
-function getSteps (data, keypath) {
+function getSteps (tree, keypath) {
   return map(keypath, function (key) {
-    if (!data) return
-    var result = hamt.get(data, key)
-    data = result
+    if (!tree) return
+    var result = hamt.get(tree, key)
+    tree = result
     return result
   })
 }
@@ -100,15 +100,15 @@ function getSteps (data, keypath) {
 /*
  * Gets data as HAMT.
  *
- * @param {Tree} data The HAMT tree to operate on
+ * @param {Tree} tree The HAMT tree to operate on
  * @param {string[]} [keypath] List of keys
  * @returns {*} the value in the given keypath
  * @private
  */
 
-function getRaw (data, keypath) {
+function getRaw (tree, keypath) {
   keypath = normalize.toArray(keypath)
-  var result = data
+  var result = tree
   forEach(keypath, function (key) {
     if (result) result = hamt.get(result, key.toString())
   })
@@ -119,41 +119,41 @@ function getRaw (data, keypath) {
  * Returns data from a HAMT store. If `keypath` is not given, it returns the
  * entire store as a JSON object.
  *
- * @param {Tree} data The HAMT tree to operate on
+ * @param {Tree} tree The HAMT tree to operate on
  * @param {string[]} [keypath] List of keys
  * @returns {*} the value in the given keypath
  */
 
-function get (data, keypath) {
-  var result = getRaw(data, keypath)
+function get (tree, keypath) {
+  var result = getRaw(tree, keypath)
   return toJS(result)
 }
 
 /**
  * Deletes from a given keypath.
  *
- * @param {Tree} data The HAMT tree to operate on
+ * @param {Tree} tree The HAMT tree to operate on
  * @returns {Tree} the resulting HAMT tree
  */
 
-function del (data, keypath) {
+function del (tree, keypath) {
   keypath = normalize.toString(keypath)
-  return hamt.del(data, keypath)
+  return hamt.del(tree, keypath)
 }
 
 /**
  * Returns keys in a given HAMT tree.
  *
- * @param {Tree} data The HAMT tree to operate on
+ * @param {Tree} tree The HAMT tree to operate on
  * @returns {string[]} a list of keys
  */
 
-function keys (data) {
-  if (!data || !data.children) return
-  var keys = map(data.children, function (child) {
+function keys (tree) {
+  if (!tree || !tree.children) return
+  var keys = map(tree.children, function (child) {
     return child.key
   })
-  if (hamt.get(data, IS_ARRAY)) {
+  if (hamt.get(tree, IS_ARRAY)) {
     return keys.slice(1)
   }
   return keys
@@ -164,14 +164,14 @@ function keys (data) {
  * Can return `object`, `array`, or anything *typeof* can return (`string`,
  * `number`, `boolean`, and so on).
  *
- * @param {Tree} data The HAMT tree to operate on
+ * @param {Tree} tree The HAMT tree to operate on
  * @param {string[]} keypath List of keys
  * @returns {string}
  */
 
-function getType (data, keypath) {
+function getType (tree, keypath) {
   keypath = normalize.toString(keypath)
-  var result = getRaw(data, keypath)
+  var result = getRaw(tree, keypath)
   var js = toJS(result)
   return Array.isArray(js) ? 'array' : typeof js
 }
@@ -202,19 +202,19 @@ function fromJS (data) {
 
 /**
  * Converts a HAMT tree to a JSON object.
- * If the given `data` is not a HAMT tree, it'll be returned as is.
+ * If the given `tree` is not a HAMT tree, it'll be returned as is.
  * Inverse of [fromJS()](#fromjs).
  *
- * @param {Tree|*} data The HAMT tree
+ * @param {Tree|*} tree The HAMT tree
  * @returns {object|*} the resulting object
  */
 
-function toJS (data) {
-  if (typeof data !== 'object' || data === null) return data
-  var isArray = hamt.get(data, IS_ARRAY)
+function toJS (tree) {
+  if (typeof tree !== 'object' || tree === null) return tree
+  var isArray = hamt.get(tree, IS_ARRAY)
   var result = isArray ? [] : {}
 
-  map(data.children, function (child) {
+  map(tree.children, function (child) {
     if (child.key === IS_ARRAY) return
     result[child.key] = toJS(child.value)
   })
@@ -224,12 +224,12 @@ function toJS (data) {
 /**
  * Extends a HAMT tree with data from objects.
  *
- * @param {Tree} data The HAMT tree to operate on
+ * @param {Tree} tree The HAMT tree to operate on
  * @param {object} ...sources Objects to extend the tree with
  * @returns {Tree} the resulting HAMT tree
  */
 
-function extend (data) {
+function extend (tree) {
   var totalArgs = arguments.length
   var source, totalKeys, i, j, key
 
@@ -239,38 +239,38 @@ function extend (data) {
     totalKeys = keys.length
     for (j = 0; j < totalKeys; j++) {
       key = keys[j]
-      data = hamt.set(data, key, fromJS(source[key]))
+      tree = hamt.set(tree, key, fromJS(source[key]))
     }
   }
 
-  return data
+  return tree
 }
 
 /**
  * Checks if a given data object is a HAMT object.
  *
- * @param {Tree|*} data A HAMT tree or anythin
+ * @param {Tree|*} tree A HAMT tree or anything
  * @return {boolean}
  */
 
-function isHamt (data) {
-  return typeof data === 'object' &&
-    typeof data.type === 'string' &&
-    typeof data.mask === 'number' &&
-    typeof data.children === 'object'
+function isHamt (tree) {
+  return typeof tree === 'object' &&
+    typeof tree.type === 'string' &&
+    typeof tree.mask === 'number' &&
+    typeof tree.children === 'object'
 }
 
 /**
  * Returns the number of keys in a HAMT tree.
  *
- * @param {Tree} data
+ * @param {Tree} tree The HAMT tree to operate on
  * @return {number}
  */
 
-function len (data) {
-  if (!data || !data.children) return
-  if (hamt.get(data, IS_ARRAY)) return data.children.length - 1
-  return data.children.length
+function len (tree) {
+  if (!tree || !tree.children) return
+  if (hamt.get(tree, IS_ARRAY)) return tree.children.length - 1
+  return tree.children.length
 }
 
 /**

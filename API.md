@@ -5,11 +5,11 @@
 ### <a id='module:nested-hamt~set'></a>set()
 
 <details>
-<summary><code>set(<b title='Tree'>data</b>, <b title='string[]'>keypath</b>, <b title='*'>val</b>)</code> → <em><a href='tree'>Tree</a></em></summary>
+<summary><code>set(<b title='Tree'>tree</b>, <b title='string[]'>keypath</b>, <b title='*'>val</b>)</code> → <em><a href='tree'>Tree</a></em></summary>
 
 | Param | Type | Description |
 | --- | --- | --- |
-| `data` | Tree | The HAMT tree to operate on |
+| `tree` | Tree | The HAMT tree to operate on |
 | `keypath` | string[] | List of keys |
 | `val` | * | Value to be set |
 </details>
@@ -22,25 +22,25 @@ applies to [get()](#get) and [del()](#del) as well.
 ```js
 import { set, get, empty } from 'nested-hamt'
 
-var data = set(empty, 'user', { name: 'John' })
-get(data, 'user.name') // => 'John'
+var tree = set(empty, 'user', { name: 'John' })
+get(tree, 'user.name') // => 'John'
 ```
 
 ```js
 // Keypaths example
 // Both are equivalent
-var data = set(empty, 'user.name', 'John')
-var data = set(empty, ['user', 'name'], 'John')
+var tree = set(empty, 'user.name', 'John')
+var  = set(empty, ['user', 'name'], 'John')
 ```
 
 ### <a id='module:nested-hamt~get'></a>get()
 
 <details>
-<summary><code>get(<b title='Tree'>data</b>, [<b title='string[]'>keypath</b>])</code> → <em>*</em></summary>
+<summary><code>get(<b title='Tree'>tree</b>, <b title='string[]'>keypath</b><sub title="Optional">?</sub>)</code> → <em>*</em></summary>
 
 | Param | Type | Description |
 | --- | --- | --- |
-| `data` | Tree | The HAMT tree to operate on |
+| `tree` | Tree | The HAMT tree to operate on |
 | `keypath` | string[], _optional_ | List of keys |
 </details>
 
@@ -50,11 +50,11 @@ entire store as a JSON object. Returns the value in the given keypath.
 ### <a id='module:nested-hamt~del'></a>del()
 
 <details>
-<summary><code>del(<b title='Tree'>data</b>)</code> → <em><a href='tree'>Tree</a></em></summary>
+<summary><code>del(<b title='Tree'>tree</b>)</code> → <em><a href='tree'>Tree</a></em></summary>
 
 | Param | Type | Description |
 | --- | --- | --- |
-| `data` | Tree | The HAMT tree to operate on |
+| `tree` | Tree | The HAMT tree to operate on |
 </details>
 
 Deletes from a given keypath. Returns the resulting HAMT tree.
@@ -62,11 +62,11 @@ Deletes from a given keypath. Returns the resulting HAMT tree.
 ### <a id='module:nested-hamt~keys'></a>keys()
 
 <details>
-<summary><code>keys(<b title='Tree'>data</b>)</code> → <em>string[]</em></summary>
+<summary><code>keys(<b title='Tree'>tree</b>)</code> → <em>string[]</em></summary>
 
 | Param | Type | Description |
 | --- | --- | --- |
-| `data` | Tree | The HAMT tree to operate on |
+| `tree` | Tree | The HAMT tree to operate on |
 </details>
 
 Returns keys in a given HAMT tree. Returns a list of keys.
@@ -88,25 +88,25 @@ Inverse of [toJS()](#tojs). Returns the resulting HAMT tree.
 ### <a id='module:nested-hamt~toJS'></a>toJS()
 
 <details>
-<summary><code>toJS(<b title='Tree | *'>data</b>)</code> → <em>object | *</em></summary>
+<summary><code>toJS(<b title='Tree | *'>tree</b>)</code> → <em>object | *</em></summary>
 
 | Param | Type | Description |
 | --- | --- | --- |
-| `data` | Tree | * | The HAMT tree |
+| `tree` | Tree | * | The HAMT tree |
 </details>
 
 Converts a HAMT tree to a JSON object.
-If the given `data` is not a HAMT tree, it'll be returned as is.
+If the given `tree` is not a HAMT tree, it'll be returned as is.
 Inverse of [fromJS()](#fromjs). Returns the resulting object.
 
 ### <a id='module:nested-hamt~extend'></a>extend()
 
 <details>
-<summary><code>extend(<b title='Tree'>data</b>)</code> → <em><a href='tree'>Tree</a></em></summary>
+<summary><code>extend(<b title='Tree'>tree</b>)</code> → <em><a href='tree'>Tree</a></em></summary>
 
 | Param | Type | Description |
 | --- | --- | --- |
-| `data` | Tree | The HAMT tree to operate on |
+| `tree` | Tree | The HAMT tree to operate on |
 | `...sources` | object | Objects to extend the tree with |
 </details>
 
@@ -115,11 +115,11 @@ Extends a HAMT tree with data from objects. Returns the resulting HAMT tree.
 ### <a id='module:nested-hamt~isHamt'></a>isHamt()
 
 <details>
-<summary><code>isHamt(<b title='Tree | *'>data</b>)</code> → <em>boolean</em></summary>
+<summary><code>isHamt(<b title='Tree | *'>tree</b>)</code> → <em>boolean</em></summary>
 
 | Param | Type | Description |
 | --- | --- | --- |
-| `data` | Tree | * | A HAMT tree or anythin |
+| `tree` | Tree | * | A HAMT tree or anything |
 </details>
 
 Checks if a given data object is a HAMT object. 
@@ -127,11 +127,11 @@ Checks if a given data object is a HAMT object.
 ### <a id='module:nested-hamt~len'></a>len()
 
 <details>
-<summary><code>len(<b title='Tree'>data</b>)</code> → <em>number</em></summary>
+<summary><code>len(<b title='Tree'>tree</b>)</code> → <em>number</em></summary>
 
 | Param | Type | Description |
 | --- | --- | --- |
-| `data` | Tree |  |
+| `tree` | Tree | The HAMT tree to operate on |
 </details>
 
 Returns the number of keys in a HAMT tree. 
