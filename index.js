@@ -101,7 +101,7 @@ function getSteps (data, keypath) {
  * Gets data as HAMT.
  *
  * @param {Tree} data The HAMT tree to operate on
- * @param {?string[]} keypath List of keys
+ * @param {string[]} [keypath] List of keys
  * @returns {*} the value in the given keypath
  * @private
  */
@@ -116,10 +116,11 @@ function getRaw (data, keypath) {
 }
 
 /**
- * Returns data from a HAMT store. If `keypath` is not given, it returns the entire store as a JSON object.
+ * Returns data from a HAMT store. If `keypath` is not given, it returns the
+ * entire store as a JSON object.
  *
  * @param {Tree} data The HAMT tree to operate on
- * @param {?string[]} keypath List of keys
+ * @param {string[]} [keypath] List of keys
  * @returns {*} the value in the given keypath
  */
 

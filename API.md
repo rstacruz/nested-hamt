@@ -36,15 +36,16 @@ var data = set(empty, ['user', 'name'], 'John')
 ### <a id='module:nested-hamt~get'></a>get()
 
 <details>
-<summary><code>get(<b title='Tree'>data</b>, <b title='string[]'>keypath</b>)</code> → <em>*</em></summary>
+<summary><code>get(<b title='Tree'>data</b>, [<b title='string[]'>keypath</b>])</code> → <em>*</em></summary>
 
 | Param | Type | Description |
 | --- | --- | --- |
 | `data` | Tree | The HAMT tree to operate on |
-| `keypath` | string[] | List of keys |
+| `keypath` | string[], _optional_ | List of keys |
 </details>
 
-Returns data from a HAMT store. If `keypath` is not given, it returns the entire store as a JSON object. Returns the value in the given keypath.
+Returns data from a HAMT store. If `keypath` is not given, it returns the
+entire store as a JSON object. Returns the value in the given keypath.
 
 ### <a id='module:nested-hamt~del'></a>del()
 
