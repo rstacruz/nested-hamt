@@ -316,3 +316,19 @@ module.exports = {
   setRaw: setRaw,
   toJS: toJS
 }
+
+/**
+ * A HAMT tree represents a nested JSON data structure, much like regular JSON.
+ * It's been optimized for faster updating times for larger trees.
+ *
+ * To generate a HAMT tree, first start with [empty](#empty) and use operations
+ * on it like [set()](#set). You may also use [fromJS()](#fromjs) to create a
+ * HAMT tree from a JSON data structure.
+ *
+ * @typedef {object} Tree
+ * @property {string} type
+ * @property {number} mask
+ * @property {string} [key]
+ * @property {*} [value]
+ * @property {Tree[]} children
+ */

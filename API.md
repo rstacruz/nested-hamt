@@ -150,3 +150,24 @@ import { set, get, empty } from 'nested-hamt'
 var tree = set(empty, 'hello', 'world')
 get(tree, 'hello') // => 'world'
 ```
+
+### <a id='module:nested-hamt~Tree'></a>Tree
+
+<details>
+<summary><code>{ <b title='string'>type</b>, <b title='number'>mask</b>, <b title='string'>key</b><sub title="Optional">?</sub>, <b title='*'>value</b><sub title="Optional">?</sub>, <b title='Tree[]'>children</b> }</code></summary>
+
+| Param | Type | Description |
+| --- | --- | --- |
+| `type` | string |  |
+| `mask` | number |  |
+| `key` | string, _optional_ |  |
+| `value` | *, _optional_ |  |
+| `children` | Tree[] |  |
+</details>
+
+A HAMT tree represents a nested JSON data structure, much like regular JSON.
+It's been optimized for faster updating times for larger trees.
+
+To generate a HAMT tree, first start with [empty](#empty) and use operations
+on it like [set()](#set). You may also use [fromJS()](#fromjs) to create a
+HAMT tree from a JSON data structure.
